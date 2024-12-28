@@ -6,6 +6,7 @@ import com.personal.expensetracker.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -34,7 +35,8 @@ public class UserController {
 
 	@PostMapping("/user/login")
 	private String afterLogin(@RequestParam String email, @RequestParam String password, HttpSession session, Model model) {
-		User user = userService.findByEmailAndPassword(email, password);
+		String encrPw = DigestUtils.md5DigestAsHex(password.getBytes());
+		User user = userService.findByEmailAndPassword(email, encrPw);
 
 		if(user != null) {
 			session.setAttribute("activeUser", user);
@@ -60,6 +62,7 @@ public class UserController {
 
 	@PostMapping("/user/signup")
 	private String aftersignup(User user){
+		user.setPassword(DigestUtils.md5DigestAsHex(user.getPassword().getBytes()));
 //		model.addAttribute("user", user);
 		userService.addUser(user);
 		return "redirect:/user/login";
