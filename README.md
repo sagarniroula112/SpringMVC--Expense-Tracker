@@ -1,2 +1,10 @@
-![image](https://github.com/user-attachments/assets/9e728312-809c-4f02-b857-d2d12a6fc34e)
-![image](https://github.com/user-attachments/assets/74d677eb-5c4f-4b35-a6ad-6456698f052f)
+# SpringMVC--ExpenseTracker
+
+## Try it at: https://springmvc-expense-tracker.onrender.com/
+### This initially takes 50 seconds or more to spin up at first visit due to render.com policies.
+
+A simple project to refresh spring MVC and spring boot concepts.
+
+Screenshots:
+![Screenshot 2024-12-28 210040](https://github.com/user-attachments/assets/22d21169-7ef3-4c2f-9170-a838da369ad8)
+![Screenshot 2024-12-28 211235](https://github.com/user-attachments/assets/800eb257-bcb0-4ec0-bd15-e98b240fbc05)
