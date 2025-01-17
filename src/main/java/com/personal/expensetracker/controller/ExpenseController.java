@@ -6,10 +6,12 @@ import com.personal.expensetracker.model.User;
 import com.personal.expensetracker.model.UserPrincipal;
 import com.personal.expensetracker.service.CategoryService;
 import com.personal.expensetracker.service.ExpenseService;
+import com.personal.expensetracker.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +27,8 @@ public class ExpenseController {
 
     @Autowired
     private CategoryService categoryService;
+    @Autowired
+    private UserService userService;
 
     @GetMapping("/expense/add")
     private String addExpense(Model model) {
@@ -47,13 +51,42 @@ public class ExpenseController {
             // Set category to the expense
             expense.setCategory(categoryService.getCategoryById(categoryId));
 
-            // Check if the user is logged in
+            // Check if the user is logged in (either regular login or OAuth)
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            UserPrincipal up = (UserPrincipal) auth.getPrincipal();
+            Object principal = auth.getPrincipal();
 
-            User user = up.getUser();
+            User user = null;
 
+            if (principal instanceof UserPrincipal) {
+                // Regular user login (via username/password)
+                UserPrincipal userPrincipal = (UserPrincipal) principal;
+                user = userPrincipal.getUser();
+            } else if (principal instanceof OAuth2User) {
+                // OAuth2 user login (e.g., Google, GitHub)
+                OAuth2User oauth2User = (OAuth2User) principal;
+                String username = null;
 
+                if(oauth2User.getAttribute("login") != null) {
+                    username = oauth2User.getAttribute("login"); // GitHub's "login" or "email" for Google
+                    user = userService.getByUsername(username);
+                }
+
+                if(oauth2User.getAttribute("email") != null) {
+                    username = oauth2User.getAttribute("email"); // GitHub's "login" or "email" for Google
+                    user = userService.getByEmail(username);
+                }
+
+                if (user == null) {
+                    // Create new user if it doesn't exist
+                    user = new User();
+                    user.setUsername(username);
+                    user.setEmail(oauth2User.getAttribute("email")); // Retrieve email if available
+                    user.setPassword(""); // OAuth2 users usually don't have passwords
+                    userService.addUser(user);
+                }
+            }
+
+            // If no user found, redirect to login page
             if (user == null) {
                 redirectAttributes.addFlashAttribute("loginMsg", "You need to LOG IN FIRST!!!");
                 return "redirect:/expense/add";
@@ -73,6 +106,7 @@ public class ExpenseController {
             return "redirect:/expense/add";
         }
     }
+
 
 
     @GetMapping("/expense/edit")
