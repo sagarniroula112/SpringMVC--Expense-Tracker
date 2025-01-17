@@ -32,8 +32,53 @@ public class ExpenseController {
 
     @GetMapping("/expense/add")
     private String addExpense(Model model) {
-        model.addAttribute("catList", categoryService.getAllCategories());
-        return "AddExpenseForm";
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+		if(authentication != null && authentication.isAuthenticated()) {
+			// Get the UserPrincipal (or User object) from the authentication
+			Object principal = authentication.getPrincipal();
+
+			if(principal instanceof UserPrincipal) {
+				model.addAttribute("username", ((UserPrincipal) authentication.getPrincipal()).getUser().getUsername());
+                
+                model.addAttribute("catList", categoryService.getAllCategories());
+				return "AddExpenseForm";
+			} else if(principal instanceof OAuth2User) {
+			
+				OAuth2User oauth2User = (OAuth2User) authentication.getPrincipal();
+				
+				String username = oauth2User.getAttribute("login");
+				String email = oauth2User.getAttribute("email");
+			
+				User user = null;
+				if(email == null) {
+					user = userService.getByUsername(username);
+				}
+				if(username == null){
+					user = userService.getByEmail(email);
+				}
+
+				if(user == null) {
+					user = new User();
+					if (email != null && email.contains("@")) {
+						// Extract the part before @gmail.com
+						username = email.split("@")[0];
+					}
+				}
+
+				if(email == null) {
+					model.addAttribute("username", oauth2User.getAttribute("login"));
+				}
+				if(username == null){
+					model.addAttribute("username", oauth2User.getAttribute("email"));
+				}
+                model.addAttribute("catList", categoryService.getAllCategories());
+                return "AddExpenseForm";
+
+            }}
+        
+        return "Failure";
     }
 
 

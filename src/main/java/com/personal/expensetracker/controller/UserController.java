@@ -77,7 +77,7 @@ public class UserController {
 
 				model.addAttribute("expList", expService.getExpensesByUser(user));
 				if(email == null) {
-					model.addAttribute("username", oauth2User.getAttribute("login"));;
+					model.addAttribute("username", oauth2User.getAttribute("login"));
 				}
 				if(username == null){
 					model.addAttribute("username", oauth2User.getAttribute("email"));
