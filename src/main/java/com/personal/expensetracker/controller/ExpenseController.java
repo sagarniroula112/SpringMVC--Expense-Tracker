@@ -3,10 +3,13 @@ package com.personal.expensetracker.controller;
 import com.personal.expensetracker.model.Category;
 import com.personal.expensetracker.model.Expense;
 import com.personal.expensetracker.model.User;
+import com.personal.expensetracker.model.UserPrincipal;
 import com.personal.expensetracker.service.CategoryService;
 import com.personal.expensetracker.service.ExpenseService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -45,7 +48,12 @@ public class ExpenseController {
             expense.setCategory(categoryService.getCategoryById(categoryId));
 
             // Check if the user is logged in
-            User user = (User) session.getAttribute("activeUser");
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            UserPrincipal up = (UserPrincipal) auth.getPrincipal();
+
+            User user = up.getUser();
+
+
             if (user == null) {
                 redirectAttributes.addFlashAttribute("loginMsg", "You need to LOG IN FIRST!!!");
                 return "redirect:/expense/add";

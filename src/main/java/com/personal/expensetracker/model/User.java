@@ -1,15 +1,11 @@
 package com.personal.expensetracker.model;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import com.personal.expensetracker.config.Role;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,11 +20,31 @@ public class User {
 	private Long id;
 	private String fname;
 	private String lname;
+	private String username;
 	private String email;
 	private String password;
+
+	@ElementCollection(fetch = FetchType.EAGER)
+	private Set<Role> roles = new HashSet<>();
 	
 	@OneToMany(mappedBy="user", cascade = CascadeType.ALL, fetch=FetchType.LAZY)
 	private List<Expense> expenses;
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public Set<Role> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(Set<Role> roles) {
+		this.roles = roles;
+	}
 
 	public Long getId() {
 		return id;

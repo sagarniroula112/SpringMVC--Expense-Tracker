@@ -18,16 +18,16 @@
 		</button>
 		<div class="collapse navbar-collapse" id="navbarNav">
 			<ul class="navbar-nav ms-auto">
-				<li class="nav-item" th:unless="${session.activeUser}">
+				<li class="nav-item" th:if="${username == null}">
 					<a class="nav-link" href="/user/login">Log In</a>
 				</li>
-				<li class="nav-item" th:unless="${session.activeUser}">
+				<li class="nav-item" th:if="${username == null}">
 					<a class="nav-link" href="/user/signup">Sign Up</a>
 				</li>
-				<li class="nav-item" th:if="${session.activeUser}">
-					<a class="nav-link" href="#">Welcome, <span th:text="${session.activeUser.fname}">User</span></a>
+				<li class="nav-item" th:if="${username != null}">
+					<a class="nav-link" href="#">Welcome, <span th:text="${username}">User</span></a>
 				</li>
-				<li class="nav-item" th:if="${session.activeUser}">
+				<li class="nav-item" th:if="${username != null}">
 					<a class="nav-link" href="/user/logout">Log Out</a>
 				</li>
 			</ul>
@@ -36,7 +36,7 @@
 </nav>
 
 <div class="container" style="margin-top: 4%">
-	<p class="text-warning" th:unless="${session.activeUser}">Login to save your expenses!</p>
+	<p class="text-warning" th:if="${username == null}">Login to save your expenses!</p>
 	<div class="card mb-4">
 		<div class="card-body">
 			<h5 class="card-title">Quick Actions</h5>

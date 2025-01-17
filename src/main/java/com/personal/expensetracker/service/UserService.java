@@ -6,7 +6,7 @@ import com.personal.expensetracker.model.User;
 
 public interface UserService {
 	void addUser(User u);
-	User findByEmailAndPassword(String email, String password);
+	User findByUsernameAndPassword(String username, String password);
 	void editUser(User u);
 	void deleteUser(long id);
 	User getUserById(long id);
