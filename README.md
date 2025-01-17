@@ -1,6 +1,6 @@
 # SpringMVC--ExpenseTracker
 
-## Try it at: https://springmvc-expense-tracker.onrender.com/
+## Try it at: https://springmvc-expense-tracker.onrender.com/ (Site is not working due to env variables issues.)
 ### This initially takes 50 seconds or more to spin up at first visit due to render.com policies.
 
 A simple project to refresh spring MVC and spring boot concepts.
